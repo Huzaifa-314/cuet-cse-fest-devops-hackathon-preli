@@ -285,11 +285,6 @@ curl http://localhost:5921/api/products
 - **No Hardcoded Credentials**: All credentials come from environment variables
 - **Input Validation**: Express JSON parsing and validation
 
-## 📊 Docker Image Sizes
-
-- **Backend**: ~364MB (optimized multi-stage build)
-- **Gateway**: ~210MB (alpine-based)
-- **MongoDB**: ~1.13GB (official image)
 
 ## 🔧 Development vs Production
 
@@ -306,19 +301,6 @@ curl http://localhost:5921/api/products
 - Resource limits configured
 - Health checks with longer intervals
 - Log rotation configured
-
-## 📝 Environment Variables
-
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `MONGO_INITDB_ROOT_USERNAME` | MongoDB root username | `admin` | No |
-| `MONGO_INITDB_ROOT_PASSWORD` | MongoDB root password | `password` | No |
-| `MONGO_URI` | MongoDB connection string | Auto-generated | No |
-| `MONGO_DATABASE` | Database name | `ecommerce` | No |
-| `BACKEND_PORT` | Backend service port | `3847` | No |
-| `GATEWAY_PORT` | Gateway service port | `5921` | No |
-| `NODE_ENV` | Node environment | `development` | No |
-| `BACKEND_URL` | Backend URL for gateway | `http://backend:3847` | No |
 
 ## 🐛 Troubleshooting
 

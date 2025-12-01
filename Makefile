@@ -73,27 +73,27 @@ endif
 .PHONY: up
 up:
 	@echo "Starting services in $(MODE) mode..."
-	docker-compose -f $(COMPOSE_FILE) up -d $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
+	docker-compose -f $(COMPOSE_FILE) --env-file .env up -d $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
 
 .PHONY: down
 down:
 	@echo "Stopping services in $(MODE) mode..."
-	docker-compose -f $(COMPOSE_FILE) down $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
+	docker-compose -f $(COMPOSE_FILE) --env-file .env down $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
 
 .PHONY: build
 build:
 	@echo "Building containers in $(MODE) mode..."
-	docker-compose -f $(COMPOSE_FILE) build $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
+	docker-compose -f $(COMPOSE_FILE) --env-file .env build $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
 
 .PHONY: logs
 logs:
 	@echo "Viewing logs for $(SERVICE) in $(MODE) mode..."
-	docker-compose -f $(COMPOSE_FILE) logs -f $(SERVICE)
+	docker-compose -f $(COMPOSE_FILE) --env-file .env logs -f $(SERVICE)
 
 .PHONY: restart
 restart:
 	@echo "Restarting services in $(MODE) mode..."
-	docker-compose -f $(COMPOSE_FILE) restart $(filter-out $@,$(MAKECMDGOALS))
+	docker-compose -f $(COMPOSE_FILE) --env-file .env restart $(filter-out $@,$(MAKECMDGOALS))
 
 .PHONY: shell
 shell:
@@ -103,7 +103,7 @@ shell:
 .PHONY: ps
 ps:
 	@echo "Running containers in $(MODE) mode:"
-	docker-compose -f $(COMPOSE_FILE) ps
+	docker-compose -f $(COMPOSE_FILE) --env-file .env ps
 
 # Development Aliases
 .PHONY: dev-up

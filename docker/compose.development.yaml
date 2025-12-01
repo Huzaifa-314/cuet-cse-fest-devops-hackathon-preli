@@ -28,13 +28,15 @@ services:
       context: ../backend
       dockerfile: Dockerfile.dev
     container_name: backend-dev
+    env_file:
+      - ../.env
     environment:
       NODE_ENV: development
       BACKEND_PORT: ${BACKEND_PORT:-3847}
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-password}
       MONGO_DATABASE: ${MONGO_DATABASE:-ecommerce}
-      MONGO_URI: ${MONGO_URI:-mongodb://admin:password@mongo:27017/ecommerce?authSource=admin}
+      MONGO_URI: ${MONGO_URI}
     # No port mapping - backend only accessible through gateway
     volumes:
       # Volume mounts for hot-reload
