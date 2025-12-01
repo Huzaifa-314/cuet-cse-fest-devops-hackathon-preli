@@ -1,0 +1,24 @@
+# Development Dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install all dependencies (including devDependencies)
+# Use npm install if package-lock.json doesn't exist, otherwise use npm ci
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+# Copy source files (will be overridden by volume mount in development)
+COPY . .
+
+# Expose port
+EXPOSE 3847
+
+# Set environment to development
+ENV NODE_ENV=development
+
+# Use tsx watch for hot-reload development
+CMD ["npm", "run", "dev"]
+
