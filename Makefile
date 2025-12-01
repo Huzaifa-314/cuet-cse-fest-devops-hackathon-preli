@@ -73,27 +73,27 @@ endif
 .PHONY: up
 up:
 	@echo "Starting services in $(MODE) mode..."
-	docker-compose -f $(COMPOSE_FILE) --env-file .env up -d $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
+	docker compose -f $(COMPOSE_FILE) --env-file .env up -d $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
 
 .PHONY: down
 down:
 	@echo "Stopping services in $(MODE) mode..."
-	docker-compose -f $(COMPOSE_FILE) --env-file .env down $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
+	docker compose -f $(COMPOSE_FILE) --env-file .env down $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
 
 .PHONY: build
 build:
 	@echo "Building containers in $(MODE) mode..."
-	docker-compose -f $(COMPOSE_FILE) --env-file .env build $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
+	docker compose -f $(COMPOSE_FILE) --env-file .env build $(ARGS) $(filter-out $@,$(MAKECMDGOALS))
 
 .PHONY: logs
 logs:
 	@echo "Viewing logs for $(SERVICE) in $(MODE) mode..."
-	docker-compose -f $(COMPOSE_FILE) --env-file .env logs -f $(SERVICE)
+	docker compose -f $(COMPOSE_FILE) --env-file .env logs -f $(SERVICE)
 
 .PHONY: restart
 restart:
 	@echo "Restarting services in $(MODE) mode..."
-	docker-compose -f $(COMPOSE_FILE) --env-file .env restart $(filter-out $@,$(MAKECMDGOALS))
+	docker compose -f $(COMPOSE_FILE) --env-file .env restart $(filter-out $@,$(MAKECMDGOALS))
 
 .PHONY: shell
 shell:
@@ -103,7 +103,7 @@ shell:
 .PHONY: ps
 ps:
 	@echo "Running containers in $(MODE) mode:"
-	docker-compose -f $(COMPOSE_FILE) --env-file .env ps
+	docker compose -f $(COMPOSE_FILE) --env-file .env ps
 
 # Development Aliases
 .PHONY: dev-up
@@ -202,10 +202,10 @@ db-reset:
 		exit 1; \
 	fi
 	@echo "Resetting database..."
-	@docker-compose -f $(COMPOSE_FILE) stop mongo || true
-	@docker-compose -f $(COMPOSE_FILE) rm -f mongo || true
+	@docker compose -f $(COMPOSE_FILE) --env-file .env stop mongo || true
+	@docker compose -f $(COMPOSE_FILE) --env-file .env rm -f mongo || true
 	@docker volume rm mongo$(CONTAINER_PREFIX)-data 2>/dev/null || true
-	@docker-compose -f $(COMPOSE_FILE) up -d mongo
+	@docker compose -f $(COMPOSE_FILE) --env-file .env up -d mongo
 	@echo "Database reset complete."
 
 .PHONY: db-backup
@@ -224,8 +224,8 @@ db-backup:
 .PHONY: clean
 clean:
 	@echo "Removing containers and networks..."
-	docker-compose -f $(COMPOSE_DEV) down
-	docker-compose -f $(COMPOSE_PROD) down
+	docker compose -f $(COMPOSE_DEV) --env-file .env down
+	docker compose -f $(COMPOSE_PROD) --env-file .env down
 	@echo "Cleanup complete."
 
 .PHONY: clean-all
@@ -236,8 +236,8 @@ clean-all:
 		exit 1; \
 	fi
 	@echo "Removing everything..."
-	@docker-compose -f $(COMPOSE_DEV) down -v --rmi all || true
-	@docker-compose -f $(COMPOSE_PROD) down -v --rmi all || true
+	@docker compose -f $(COMPOSE_DEV) --env-file .env down -v --rmi all || true
+	@docker compose -f $(COMPOSE_PROD) --env-file .env down -v --rmi all || true
 	@docker system prune -af
 	@echo "Cleanup complete."
 
@@ -249,8 +249,8 @@ clean-volumes:
 		exit 1; \
 	fi
 	@echo "Removing volumes..."
-	@docker-compose -f $(COMPOSE_DEV) down -v || true
-	@docker-compose -f $(COMPOSE_PROD) down -v || true
+	@docker compose -f $(COMPOSE_DEV) --env-file .env down -v || true
+	@docker compose -f $(COMPOSE_PROD) --env-file .env down -v || true
 	@docker volume prune -f
 	@echo "Volumes removed."
 
@@ -270,7 +270,7 @@ health:
 	@curl -s http://localhost:5921/api/health || echo "Backend not responding"
 	@echo ""
 	@echo "Container Status:"
-	@docker-compose -f $(COMPOSE_FILE) ps
+	@docker compose -f $(COMPOSE_FILE) ps
 
 .PHONY: help
 help:

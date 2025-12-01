@@ -75,7 +75,9 @@ A fully containerized microservices architecture with Docker, featuring a produc
 
 ### Prerequisites
 
-- Docker Desktop (or Docker Engine + Docker Compose)
+- Docker Desktop (or Docker Engine + Docker Compose V2)
+  - **Note**: This project uses `docker compose` (space) command, which is the newer Docker Compose V2 syntax
+  - If you have the older `docker-compose` (hyphen), you may need to install Docker Compose V2 or create an alias
 - Make (optional, for using Makefile commands)
 - Git
 
@@ -91,6 +93,10 @@ A fully containerized microservices architecture with Docker, featuring a produc
    ```bash
    # Copy and edit with your values
    cp .env.example .env  # If available, or create manually
+   
+   # Or edit the .env file directly
+   nano .env  # On Linux/Mac
+   # On Windows, use: notepad .env
    ```
 
 3. **Configure environment variables**
@@ -103,6 +109,7 @@ A fully containerized microservices architecture with Docker, featuring a produc
 
    # Service Ports (DO NOT CHANGE)
    BACKEND_PORT=3847
+   BACKEND_URL=http://backend:3847
    GATEWAY_PORT=5921
 
    # Environment
@@ -111,6 +118,7 @@ A fully containerized microservices architecture with Docker, featuring a produc
 
 4. **Start development environment**
    ```bash
+   cd 
    make dev-up
    # Or manually:
    docker-compose -f docker/compose.development.yaml up -d
@@ -303,6 +311,22 @@ curl http://localhost:5921/api/products
 - Log rotation configured
 
 ## 🐛 Troubleshooting
+
+### Docker Compose command not found
+
+If you get `docker-compose: No such file or directory`:
+
+```bash
+# Check if you have Docker Compose V2 (newer version)
+docker compose version
+
+# If not available, install Docker Compose V2 or create an alias:
+# Option 1: Install Docker Compose V2 plugin
+# Option 2: Create alias (temporary fix)
+alias docker-compose='docker compose'
+
+# Or update the Makefile to use 'docker-compose' if you have the standalone version
+```
 
 ### Services won't start
 ```bash
