@@ -83,7 +83,7 @@ A fully containerized microservices architecture with Docker, featuring a produc
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Huzaifa-314/cuet-cse-fest-devops-hackathon-preli
    cd cuet-cse-fest-devops-hackathon-preli
    ```
 
