@@ -393,13 +393,6 @@ make db-reset FORCE=yes
 
 This project is part of a hackathon challenge.
 
-## ⚠️ Important Notes
-
-- **DO NOT CHANGE** port numbers (3847, 5921) - they are required by the challenge
-- **DO NOT COMMIT** `.env` file with actual credentials
-- Keep repository **private** during development
-- Make repository **public** in the last 5 minutes before submission
-- **NO POST-CONTEST COMMITS** - all work must be committed before deadline
 
 ---
 
