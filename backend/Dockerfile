@@ -3,19 +3,24 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files for dependency installation
+# Copy package files for dependency installation (optimize layer caching)
 COPY package.json package-lock.json* ./
 
 # Install all dependencies (including devDependencies for building)
 # Use npm install if package-lock.json doesn't exist, otherwise use npm ci
 RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
-# Copy source files and TypeScript config
+# Copy TypeScript config
 COPY tsconfig.json ./
+
+# Copy source files
 COPY src ./src
 
 # Build TypeScript to JavaScript
-RUN npm run build
+RUN npm run build && \
+    # Remove source files and dev dependencies to reduce image size
+    rm -rf src node_modules && \
+    npm ci --only=production
 
 # Stage 2: Production runtime stage
 FROM node:18-alpine AS production
@@ -29,13 +34,9 @@ RUN addgroup -g 1001 -S nodejs && \
 # Copy package files
 COPY package.json package-lock.json* ./
 
-# Install only production dependencies
-# Use npm install if package-lock.json doesn't exist, otherwise use npm ci
-RUN if [ -f package-lock.json ]; then npm ci --only=production; else npm install --only=production; fi && \
-    npm cache clean --force
-
-# Copy built files from builder stage
+# Copy built files and production node_modules from builder stage
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
 
 # Change ownership to non-root user
 RUN chown -R nodejs:nodejs /app

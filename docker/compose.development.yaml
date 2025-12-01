@@ -35,9 +35,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-password}
       MONGO_DATABASE: ${MONGO_DATABASE:-ecommerce}
       MONGO_URI: ${MONGO_URI:-mongodb://admin:password@mongo:27017/ecommerce?authSource=admin}
-    ports:
-      # Internal only - not exposed to host
-      - "127.0.0.1:3847:3847"
+    # No port mapping - backend only accessible through gateway
     volumes:
       # Volume mounts for hot-reload
       - ../backend/src:/app/src
