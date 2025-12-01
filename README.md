@@ -118,7 +118,6 @@ A fully containerized microservices architecture with Docker, featuring a produc
 
 4. **Start development environment**
    ```bash
-   cd 
    make dev-up
    # Or manually:
    docker-compose -f docker/compose.development.yaml up -d
