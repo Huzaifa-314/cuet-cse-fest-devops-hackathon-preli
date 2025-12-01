@@ -1,6 +1,86 @@
-# services:
-  # backend:
+version: '3.8'
 
-  # gateway:
+services:
+  mongo:
+    image: mongo:7
+    container_name: mongo-dev
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-password}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-ecommerce}
+    ports:
+      # Internal only - not exposed to host
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - app-network
+    restart: unless-stopped
 
-  # mongo:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.dev
+    container_name: backend-dev
+    environment:
+      NODE_ENV: development
+      BACKEND_PORT: ${BACKEND_PORT:-3847}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-password}
+      MONGO_DATABASE: ${MONGO_DATABASE:-ecommerce}
+      MONGO_URI: ${MONGO_URI:-mongodb://admin:password@mongo:27017/ecommerce?authSource=admin}
+    ports:
+      # Internal only - not exposed to host
+      - "127.0.0.1:3847:3847"
+    volumes:
+      # Volume mounts for hot-reload
+      - ../backend/src:/app/src
+      - ../backend/tsconfig.json:/app/tsconfig.json
+      - ../backend/package.json:/app/package.json
+      # Exclude node_modules from volume mount
+      - /app/node_modules
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  gateway:
+    build:
+      context: ../gateway
+      dockerfile: Dockerfile.dev
+    container_name: gateway-dev
+    environment:
+      NODE_ENV: development
+      GATEWAY_PORT: ${GATEWAY_PORT:-5921}
+      BACKEND_URL: ${BACKEND_URL:-http://backend:3847}
+    ports:
+      # Exposed to host
+      - "5921:5921"
+    volumes:
+      # Volume mounts for hot-reload
+      - ../gateway/src:/app/src
+      - ../gateway/package.json:/app/package.json
+      # Exclude node_modules from volume mount
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+    name: mongo-dev-data
+
+networks:
+  app-network:
+    name: app-dev-network
+    driver: bridge
